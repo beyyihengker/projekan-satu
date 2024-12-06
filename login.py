@@ -7,7 +7,6 @@ from tabulate import tabulate
 file_path_akun = "akun.csv"
 file_path_stok = "stok.csv"
 file_path_penjualan = "penjualan.csv"
-file_path_pengeluaran = "pengeluaran.csv"
 file_path_keuangan = "keuangan.csv"
 
 # Fungsi untuk membaca data CSV
@@ -32,14 +31,6 @@ def memastikan_csv_ada():
         with open(file_path_stok, mode="w", newline="") as file:
             writer = csv.writer(file)
             writer.writerow(["nama_tanaman", "stok", "harga_beli", "harga_jual"])
-    if not os.path.exists(file_path_penjualan):
-        with open(file_path_penjualan, mode="w", newline="") as file:
-            writer = csv.writer(file)
-            writer.writerow(["nama_tanaman", "jumlah", "total_harga", "tanggal", "waktu"])
-    if not os.path.exists(file_path_pengeluaran):
-        with open(file_path_pengeluaran, mode="w", newline="") as file:
-            writer = csv.writer(file)
-            writer.writerow(["tanggal", "deskripsi", "jumlah"])
     if not os.path.exists(file_path_keuangan):
         with open(file_path_keuangan, mode="w", newline="") as file:
             writer = csv.writer(file)
