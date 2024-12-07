@@ -2,7 +2,7 @@
 def interface_pemilik():
     while True:
         print("\n==========˖ ᡣ𐭩 ⊹ ࣪  ౨ৎ˚₊==========")
-        print("==== Selamat Datang, Saviya  ====")
+        print("==== Selamat Datang, Pemilik ====")
         print("=====   Menu Pemilik Toko   =====")
         print("==========˖ ᡣ𐭩 ⊹ ࣪  ౨ৎ˚₊==========")
         menu_pemilik = [
@@ -26,7 +26,7 @@ def interface_pemilik():
             os.system("cls")
             keuangan = pd.read_csv('keuangan.csv')
             print("\n=== Laporan Keuangan ===")
-            print(tabulate(keuangan.values.tolist(), headers=["Tanggal", "Keterangan", "Jumlah", "Saldo"], tablefmt="double_grid"))
+            print(tabulate(keuangan.values.tolist(), headers=["Tanggal", "Waktu", "Keterangan", "Jumlah", "Saldo"], tablefmt="double_grid"))
             input("Tekan enter untuk kembali")
             os.system("cls")
             interface_pemilik()
