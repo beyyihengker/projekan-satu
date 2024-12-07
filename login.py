@@ -9,15 +9,12 @@ file_path_stok = "stok.csv"
 file_path_penjualan = "penjualan.csv"
 file_path_keuangan = "keuangan.csv"
 
-# Fungsi untuk membaca data CSV
-def baca_csv(file_path):
-    data = []
-    if os.path.exists(file_path):
-        with open(file_path, mode="r") as file:
-            baca = csv.DictReader(file)
-            for row in baca:
-                data.append(row)
-    return data
+# Fungsi untuk menulis data ke file CSV.
+def write_csv(file_path, data, fieldnames):
+    with open(file_path, mode="w", newline='', encoding="utf-8") as file:
+        writer = csv.DictWriter(file, fieldnames=fieldnames)
+        writer.writeheader()
+        writer.writerows(data)
 
 # Fungsi untuk memastikan file CSV ada
 def memastikan_csv_ada():
@@ -31,11 +28,15 @@ def memastikan_csv_ada():
         with open(file_path_stok, mode="w", newline="") as file:
             writer = csv.writer(file)
             writer.writerow(["nama_tanaman", "stok", "harga_beli", "harga_jual"])
+    if not os.path.exists(file_path_penjualan):
+        with open(file_path_penjualan, mode="w", newline="") as file:
+            writer = csv.writer(file)
+            writer.writerow(["nama_tanaman", "jumlah", "total_harga", "tanggal", "waktu"])
     if not os.path.exists(file_path_keuangan):
         with open(file_path_keuangan, mode="w", newline="") as file:
             writer = csv.writer(file)
-            writer.writerow(["tanggal", "keterangan", "jumlah", "saldo"])
-            writer.writerow([datetime.now().strftime("%Y-%m-%d"), "Saldo Awal", "0", "0"])
+            writer.writerow(["tanggal", "waktu", "keterangan", "jumlah", "saldo"])
+            writer.writerow([datetime.now().strftime("%Y-%m-%d"), datetime.now().strftime("%H:%M:%S"), "Saldo Awal", "0", "0"])
 
 # Fungsi untuk menulis data ke CSV
 def write_csv(file_path, data, fieldnames):
@@ -43,6 +44,16 @@ def write_csv(file_path, data, fieldnames):
         writer = csv.DictWriter(file, fieldnames=fieldnames)
         writer.writeheader()
         writer.writerows(data)
+
+# Fungsi untuk membaca data CSV
+def baca_csv(file_path):
+    data = []
+    if os.path.exists(file_path):
+        with open(file_path, mode="r") as file:
+            baca = csv.DictReader(file)
+            for row in baca:
+                data.append(row)
+    return data
 
 # Fungsi utama
 def main():
@@ -56,7 +67,7 @@ def main():
 
     menu_utama= [
         ["1", "Pemilik"],
-        ["2", "Penjual"],
+        ["2", "Pegawai"],
         ["3", "Keluar Aplikasi"]
     ]
 
@@ -69,14 +80,12 @@ def main():
             role = "pemilik_toko"
             nama = input("Silakan Masukkan Nama : ")
             pin = input("Silakan Masukkan Pin: ")
-            os.system("cls")
-
+            
         elif role_pilihan == 2:
             role = "penjual"
             nama = input("Silakan Masukkan Nama : ")
             pin = input("Silakan Masukkan Pin: ")
-            os.system("cls")
-
+            
         elif role_pilihan == 3:
             os.system("cls")
             print("Terima Kasih Telah Menggunakan Aplikasi Kami!!")
@@ -88,6 +97,13 @@ def main():
             os.system("cls")
             main()
 
+    except ValueError:
+        print("Masukkan pilihan yang valid!")
+        input("Tekan enter untuk melanjutkan.")
+        os.system("cls")
+        main()
+
+    while True:
         for account in akun:
             if account["role"] == role and account["nama"] == nama and account["pin"] == pin:
                 print(f"Login Berhasil! Selamat datang, {nama}.")
@@ -95,10 +111,8 @@ def main():
                 interface_pemilik() if role == "pemilik_toko" else interface_penjual()
                 return
             
+            
         print("Login gagal. Silakan coba lagi.")
         input("Tekan enter untuk kembali")
         os.system("cls")
         main()
-            
-    except ValueError:
-        print("Masukkan pilihan yang valid!")
