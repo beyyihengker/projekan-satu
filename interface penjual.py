@@ -2,8 +2,8 @@
 def interface_penjual():
     while True:
         print("\n==========˖ ᡣ𐭩 ⊹ ࣪  ౨ৎ˚₊==========")
-        print("==== Selamat Datang, Penjual ====")
-        print("=====   Menu Pemilik Toko   =====")
+        print("==== Selamat Datang, Pegawai ====")
+        print("=====   Menu Pegawai Toko   =====")
         print("==========˖ ᡣ𐭩 ⊹ ࣪  ౨ৎ˚₊==========")
         menu_penjual =[
             ["1", "Daftar Barang"],
@@ -26,67 +26,62 @@ def interface_penjual():
             interface_penjual()
 
         elif pilihan == "2":
+            os.system("cls")
             stok = baca_csv(file_path_stok)
             penjualan = baca_csv(file_path_penjualan)
-            os.system("cls")
+            list_stok = pd.read_csv('stok.csv')
+            print(tabulate(list_stok.values.tolist(), headers=["Nama Tanaman", "Jumlah Stok", "Harga Beli", "Harga Jual"], tablefmt="double_grid"))
             print("\n=== Pembayaran ===")
+            nama = input("Masukkan nama tanaman: ")
+            jumlah = int(input("Masukkan jumlah pembelian: "))
+            
+            # Periksa apakah nama tanaman ada di stok
+            tanaman_ditemukan = False
+            for item in stok:
+                if item["nama_tanaman"].lower() == nama.lower():
+                    tanaman_ditemukan = True
 
-            total_transaksi = 0
-            items_beli = []
+                    # Periksa stok mencukupi
+                    if int(item["stok"]) >= jumlah:
+                        total_harga = int(item["harga_jual"]) * jumlah
+                        item["stok"] = str(int(item["stok"]) - jumlah)
+                        
+                        # Rekam transaksi penjualan
+                        now = datetime.now()
+                        penjualan.append({
+                            "nama_tanaman": nama,
+                            "jumlah": str(jumlah),
+                            "total_harga": str(total_harga),
+                            "tanggal": now.strftime("%Y-%m-%d"),
+                            "waktu": now.strftime("%H:%M:%S")
+                        })
+                        
+                        # Rekam transaksi keuangan
+                        transaksi_keuangan(
+                            keterangan=f"Penjualan {nama} dengan jumlah ({jumlah} pcs)", 
+                            jumlah=total_harga
+                        )
 
-            while True:
-                nama = input("Masukkan nama tanaman (atau ketik 'selesai' untuk menyelesaikan): ").strip()
-                if nama.lower() == "selesai":
-                    break
+                        # Simpan perubahan pada file CSV
+                        write_csv(file_path_stok, stok, ["nama_tanaman", "stok", "harga_beli", "harga_jual"])
+                        write_csv(file_path_penjualan, penjualan, ["nama_tanaman", "jumlah", "total_harga", "tanggal", "waktu"])
+                        print(f"Pembayaran berhasil! Total: Rp{total_harga}")
+                        input("Tekan enter untuk kembali")
+                        os.system("cls")
+                        interface_penjual()
+                    
+                    else:
+                        print("Stok tidak mencukupi.")
+                        input("Tekan enter untuk kembali")
+                        os.system("cls")
+                        interface_penjual()
+            
+            if not tanaman_ditemukan:
+                print("Tanaman tidak ditemukan.")
+                input("Tekan enter untuk kembali")
+                os.system("cls")
+                interface_penjual()
 
-                jumlah = int(input("Masukkan jumlah pembelian: "))
-
-                # Periksa apakah nama tanaman ada di stok
-                for item in stok:
-                    if item["nama_tanaman"].lower() == nama.lower():
-                        tanaman_ditemukan = True
-                        if int(item["stok"]) >= jumlah:
-                            total_harga = int(item["harga_jual"]) * jumlah
-                            item["stok"] = str(int(item["stok"]) - jumlah)
-
-                            # Simpan item yang dibeli
-                            items_beli.append({
-                                "nama_tanaman": nama,
-                                "jumlah": jumlah,
-                                "total_harga": total_harga
-                            })
-                            total_transaksi += total_harga
-                            print(f"Berhasil menambahkan {nama} (x{jumlah}). Subtotal: Rp{total_transaksi}")
-                        else:
-                            print("Stok tidak mencukupi.")
-                        break
-
-                if not tanaman_ditemukan:
-                    print("Tanaman tidak ditemukan.")
-
-            if items_beli:
-                # Rekam transaksi penjualan
-                now = datetime.now()
-                for item_beli in items_beli:
-                    penjualan.append({
-                        "nama_tanaman": item_beli["nama_tanaman"],
-                        "jumlah": str(item_beli["jumlah"]),
-                        "total_harga": str(item_beli["total_harga"]),
-                        "tanggal": now.strftime("%Y-%m-%d"),
-                        "waktu": now.strftime("%H:%M:%S")
-                    })
-
-                # Simpan perubahan ke file CSV
-                write_csv(file_path_stok, stok, ["nama_tanaman", "stok", "harga_beli", "harga_jual"])
-                write_csv(file_path_penjualan, penjualan, ["nama_tanaman", "jumlah", "total_harga", "tanggal", "waktu"])
-        
-                print(f"Pembayaran selesai! Total transaksi: Rp{total_transaksi}")
-            else:
-                print("Tidak ada item yang dibeli.")
-
-            input("Tekan enter untuk kembali")
-            os.system("cls")
-        
         elif pilihan == "3":
             os.system("cls")
             main()
