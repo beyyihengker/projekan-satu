@@ -1,9 +1,4 @@
-# Fungsi untuk mendapatkan saldo terbaru
-def saldo_terbaru():
-    keuangan = baca_csv(file_path_keuangan)
-    return int(keuangan[-1]["saldo"]) if keuangan else 0
-
-# Fungsi untuk mencatat transaksi keuangan
+# Fungsi untuk mencatat transaksi keuangan dan menulis data ke file CSV.
 def transaksi_keuangan(keterangan, jumlah):
     keuangan = baca_csv(file_path_keuangan)
     saldo_sekarang = saldo_terbaru()
@@ -12,8 +7,10 @@ def transaksi_keuangan(keterangan, jumlah):
 
     keuangan.append({
         "tanggal": now.strftime("%Y-%m-%d"),
+        "waktu": now.strftime("%H:%M:%S"),
         "keterangan": keterangan,
-        "jumlah": str(jumlah),
-        "saldo": str(saldo_baru)
+        "jumlah": f"{jumlah}",
+        "saldo": f"{saldo_baru}"
     })
-    write_csv(file_path_keuangan, keuangan, ["tanggal", "keterangan", "jumlah", "saldo"])
+
+    write_csv(file_path_keuangan, keuangan, ["tanggal", "waktu", "keterangan", "jumlah", "saldo"])
