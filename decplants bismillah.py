@@ -412,7 +412,12 @@ def buat_akun(akun_csv=file_path_akun):
             interface_pemilik()
             return
     else:
-            raise ValueError
+            print("Opsi tidak valid!")
+            input("Tekan enter untuk melanjutkan.")
+            os.system("cls")
+            buat_akun()
+            return
+
 
     pegawai_baru = input("Silakan Masukkan Nama : ")
     if not pegawai_baru:
